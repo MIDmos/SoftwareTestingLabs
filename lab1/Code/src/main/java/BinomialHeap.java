@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class BinomialTree {
+public class BinomialHeap {
 
     private static final int DEFAULT_TREES = 1;
 
@@ -8,12 +8,12 @@ public class BinomialTree {
     private BinomialNode[] roots;
 
 
-    public BinomialTree() {
+    public BinomialHeap() {
         roots = new BinomialNode[DEFAULT_TREES];
         clear();
     }
 
-    public BinomialTree(int item) {
+    public BinomialHeap(int item) {
         currentSize = 1;
         roots = new BinomialNode[1];
         roots[0] = new BinomialNode(item, null, null);
@@ -32,7 +32,7 @@ public class BinomialTree {
     }
 
 
-    public void merge(BinomialTree rhs) {
+    public void merge(BinomialHeap rhs) {
         if (this == rhs)
             return;
 
@@ -98,7 +98,7 @@ public class BinomialTree {
     }
 
     public void insert(int x) {
-        merge(new BinomialTree(x));
+        merge(new BinomialHeap(x));
     }
 
     public int findMin() {
@@ -133,7 +133,7 @@ public class BinomialTree {
 
         BinomialNode deletedTree = roots[minIndex].leftChild;
 
-        BinomialTree deletedQueue = new BinomialTree();
+        BinomialHeap deletedQueue = new BinomialHeap();
         deletedQueue.expandTheTrees(minIndex + 1);
 
         deletedQueue.currentSize = (1 << minIndex) - 1;
