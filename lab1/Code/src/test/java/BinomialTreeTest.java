@@ -252,7 +252,30 @@ class BinomialTreeTest {
     }
 
     @Test
-    void merge_SameTest() {
+    void merge_SameSizeTest() {
+        final BinomialTree secondTree = new BinomialTree();
+        tree.insert(12);
+        secondTree.insert(12);
+        tree.insert(-3);
+        secondTree.insert(-3);
+        tree.insert(-9);
+        secondTree.insert(-9);
+        tree.insert(5);
+        secondTree.insert(5);
+
+        tree.merge(secondTree);
+        assertEquals(-9, tree.deleteMin());
+        assertEquals(-9, tree.deleteMin());
+        assertEquals(-3, tree.deleteMin());
+        assertEquals(-3, tree.deleteMin());
+        assertEquals(5, tree.deleteMin());
+        assertEquals(5, tree.deleteMin());
+        assertEquals(12, tree.deleteMin());
+        assertEquals(12, tree.deleteMin());
+    }
+
+    @Test
+    void merge_SelfTest() {
         tree.insert(12);
         tree.insert(-3);
         tree.insert(-9);
