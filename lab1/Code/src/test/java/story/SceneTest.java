@@ -6,66 +6,70 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SceneTest {
     @Test
-    void play_OkWorkTest() {
+    void play_BadAirTest() {
         final Person[] team = {new Person("Test"), new Person("Test2")};
-        final Rocket rocket = new Rocket(new Space(), new Engine(true));
-        final Scene scene = new Scene(team, rocket);
-        assertEquals("Тоненький свист перерос в рев воздуха. Test, Test2 вылетели как конфетти из хлопушки прямиком в Космос.", scene.play());
+        final Engine engine = new Engine(true);
+        final Air air = new Air("комнатный воздух", true);
+        final Air space = null;
+        final Scene scene = new Scene(team, engine, air, space);
+        assertEquals("Зажужжал мотор, комнатный воздух зашумел. Test, Test2 вылетели как конфетти из хлопушки прямиком в открытый космос. Test не может дышать, Test2 не может дышать.", scene.play());
     }
 
     @Test
-    void play_OkWorkNamesSpaceTest() {
+    void play_OkAirTest() {
         final Person[] team = {new Person("Test"), new Person("Test2")};
-        final Rocket rocket = new Rocket(new Space("космос, наполненный звездами"), new Engine(true));
-        final Scene scene = new Scene(team, rocket);
-        assertEquals("Тоненький свист перерос в рев воздуха. Test, Test2 вылетели как конфетти из хлопушки прямиком в космос, наполненный звездами.", scene.play());
+        final Engine engine = new Engine(true);
+        final Air air = new Air("комнатный воздух", true);
+        final Air space = new Air("свежий воздух", true);
+        final Scene scene = new Scene(team, engine, air, space);
+        assertEquals("Зажужжал мотор, комнатный воздух зашумел. Test, Test2 перешли в пространство с воздухом свежий воздух. Test может дышать, Test2 может дышать.", scene.play());
     }
 
     @Test
-    void play_NoWorkTest() {
+    void play_BadEngineTest() {
         final Person[] team = {new Person("Test"), new Person("Test2")};
-        final Rocket rocket = new Rocket(new Space(), new Engine(false));
-        final Scene scene = new Scene(team, rocket);
-        assertEquals(Rocket.NO_WORK, scene.play());
+        final Engine engine = new Engine(false);
+        final Air air = new Air("комнатный воздух", true);
+        final Air space = new Air("свежий воздух", true);
+        final Scene scene = new Scene(team, engine, air, space);
+        assertEquals("Test может дышать, Test2 может дышать.", scene.play());
     }
 
     @Test
-    void play_UselessWorkTest() {
+    void play_NullEngineTest() {
         final Person[] team = {new Person("Test"), new Person("Test2")};
-        final Rocket rocket = new Rocket(null, new Engine(true));
-        final Scene scene = new Scene(team, rocket);
-        assertEquals(Rocket.USELESS_WORK, scene.play());
+        final Air air = new Air("комнатный воздух", true);
+        final Air space = new Air("свежий воздух", true);
+        final Scene scene = new Scene(team, null, air, space);
+        assertEquals("Мотор не зажжужжал. Test может дышать, Test2 может дышать.", scene.play());
     }
-
-    @Test
-    void team_Test() {
-        final Person[] team = {new Person("Test"), new Person("Test2")};
-        final Rocket rocket = new Rocket();
-        final Scene scene = new Scene(team, rocket);
-        assertArrayEquals(team, scene.getTeam());
-    }
-
-    @Test
-    void rocket_Test() {
-        final Person[] team = {new Person("Test")};
-        final Rocket rocket = new Rocket();
-        final Scene scene = new Scene(team, rocket);
-        assertEquals(rocket, scene.getRocket());
-    }
-
 
     @Test
     void create_NullTeam() {
-        assertThrows(IllegalArgumentException.class, () -> new Scene(null, new Rocket()));
+        final Engine engine = new Engine(true);
+        final Air air = new Air("Комнатный воздух", true);
+        assertThrows(IllegalArgumentException.class, () -> new Scene(null, engine, air, null));
     }
 
     @Test
     void create_EmptyTeam() {
-        assertThrows(IllegalArgumentException.class, () -> new Scene(new Person[]{}, new Rocket()));
+        final Person[] team = {};
+        final Engine engine = new Engine(true);
+        final Air air = new Air("Комнатный воздух", true);
+        assertThrows(IllegalArgumentException.class, () -> new Scene(team, engine, air, null));
     }
 
     @Test
-    void create_NullRocket() {
-        assertThrows(IllegalArgumentException.class, () -> new Scene(new Person[]{new Person("Test")}, null));
+    void create_NullAir() {
+        final Person[] team = {new Person("Test"), new Person("Test2")};
+        final Engine engine = new Engine(true);
+        assertThrows(IllegalArgumentException.class, () -> new Scene(team, engine, null, null));
+    }
+    @Test
+    void create_BadAir() {
+        final Person[] team = {new Person("Test"), new Person("Test2")};
+        final Engine engine = new Engine(true);
+        final Air air = new Air("Воздух",false);
+        assertThrows(IllegalArgumentException.class, () -> new Scene(team, engine, air, null));
     }
 }

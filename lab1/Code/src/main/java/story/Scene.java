@@ -1,49 +1,67 @@
 package story;
 
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
+
 public class Scene {
     final private Person[] team;
-    final private Rocket rocket;
+    final private Engine engine;
+    final private Air air;
+    final private Air space;
 
-    public Scene(Person[] team, Rocket rocket) {
+    public Scene(Person[] team, Engine engine, Air air, Air space) {
         if (team == null || team.length < 1) {
             throw new IllegalArgumentException("Team must contain at least one person");
         }
-        if (rocket == null) {
-            throw new IllegalArgumentException("Rocket cannot be null");
+        if (air == null) {
+            throw new IllegalArgumentException("Air cannot be null");
+        }
+        if (!air.hasOxygen()) {
+            throw new IllegalArgumentException("Air must have an oxygen");
         }
         this.team = team;
-        this.rocket = rocket;
+        this.engine = engine;
+        this.air = air;
+        this.space = space;
     }
 
     public String play() {
-        if (!rocket.canWork()) {
-            return rocket.doWork();
-        } else {
-            if (rocket.canGoToSpace()) {
-                StringBuilder sb = new StringBuilder(rocket.doWork());
-                sb.append(". ");
-                for (Person p : team) {
-                    sb.append(p.getName());
-                    sb.append(", ");
-                }
-                if (team.length > 0) {
-                    sb.setLength(sb.length() - 2);
-                }
-                sb.append(" вылетели как конфетти из хлопушки прямиком в ");
-                sb.append(rocket.getTargetSpace().getDescription());
-                sb.append(".");
-                return sb.toString();
-            } else {
-                return rocket.doWork();
+        StringBuilder sb = new StringBuilder();
+        Air currentAir = air;
+        if (engine == null) {
+            sb.append(Engine.NO_WORK);
+            sb.append(". ");
+        } else if (engine.canWork()) {
+            sb.append(engine.doWork());
+            sb.append(", ");
+            sb.append(currentAir.getDescription());
+            sb.append(" зашумел");
+            sb.append(". ");
+
+            currentAir = space;
+            for (Person p : team) {
+                sb.append(p.getName());
+                sb.append(", ");
             }
+            if (team.length > 0) {
+                sb.setLength(sb.length() - 2);
+            }
+            if(space==null){
+                sb.append(" вылетели как конфетти из хлопушки прямиком в открытый космос");
+            }else {
+                sb.append(" перешли в пространство с воздухом ");
+                sb.append(space.getDescription());
+            }
+            sb.append(". ");
         }
-    }
-
-    public Person[] getTeam() {
-        return team;
-    }
-
-    public Rocket getRocket() {
-        return rocket;
+        for (Person p : team) {
+            sb.append(p.getName());
+            sb.append(p.canBreathe(currentAir) ? " может дышать" : " не может дышать");
+            sb.append(", ");
+        }
+        if (team.length > 0) {
+            sb.setLength(sb.length() - 2);
+        }
+        sb.append(".");
+        return sb.toString();
     }
 }

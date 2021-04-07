@@ -16,4 +16,11 @@ public class Person {
     public String getName() {
         return name;
     }
+
+    public boolean canBreathe(Air air){
+        if(air==null){
+            return false;
+        }
+        return air.hasOxygen();
+    }
 }
